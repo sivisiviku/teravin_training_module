@@ -13,6 +13,10 @@ export class ItemService {
         }
     }
 
+    public async findAll(): Promise<Item[]> {
+        return await ItemService.itemRepository.find();
+    }
+
     public async findById(id: number): Promise<Item> {
         try {
             return await ItemService.itemRepository.findOne({

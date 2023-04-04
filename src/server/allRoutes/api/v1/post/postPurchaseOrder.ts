@@ -26,7 +26,7 @@ const body: BodyFormat = {
             type: "string",
             required: true
         },
-        supplier_id: {
+        supplierId: {
             type: "number",
             required: true
         },
@@ -37,7 +37,7 @@ const body: BodyFormat = {
                 type: "object",
                 required: true,
                 fields: {
-                    item_id: {
+                    itemId: {
                         type: "number",
                         required: true
                     },

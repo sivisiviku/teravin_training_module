@@ -12,11 +12,11 @@ export class SalesOrderItem extends BaseEntity {
     @PrimaryColumn({name: "id"})
     public id: number;
 
-    @Column({name: "sales_order_id"})
-    public sales_order_id: number;
+    @Column({name: "salesOrderId"})
+    public salesOrderId: number;
 
-    @Column({name: "item_id"})
-    public item_id: number;
+    @Column({name: "itemId"})
+    public itemId: number;
 
     @Column({name: "price"})
     public price: number;

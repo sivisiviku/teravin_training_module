@@ -1,4 +1,4 @@
-import { PurchaseOrder, PurchaseOrderItem } from "../entity";
+import { PurchaseOrder } from "../entity";
 import { IDI } from "../interface";
 import { Repository } from "typeorm";
 import { PurchaseOrderItemService } from "./purchaseOrderItemService";
@@ -20,19 +20,12 @@ export class PurchaseOrderService {
     public async create(data: PurchaseOrder): Promise<PurchaseOrder> {
         const purchaseOrder = new PurchaseOrder();
         purchaseOrder.date = data.date;
-        purchaseOrder.supplier_id = data.supplier_id;
+        purchaseOrder.supplierId = data.supplierId;
         try {
             const purchaseOrderResponse = await PurchaseOrderService.purchaseOrderRepository.save(purchaseOrder);
-            const purchaseOrderItem = new PurchaseOrderItem();
             
-            for(let i = 0; i < data.items.length; i++) {
-                purchaseOrderItem.purchase_order_id = purchaseOrderResponse.id;
-                purchaseOrderItem.item_id = data.items[i].item_id;
-                purchaseOrderItem.price = data.items[i].price;
-                purchaseOrderItem.qty = data.items[i].qty;
-                
-                await PurchaseOrderService.purchaseOrderItemService.create(purchaseOrderItem);
-            }
+            await PurchaseOrderService.purchaseOrderItemService.createBulk(purchaseOrderResponse.id, data.items); 
+
             return purchaseOrderResponse;
         } catch (e) {
             console.log(e);

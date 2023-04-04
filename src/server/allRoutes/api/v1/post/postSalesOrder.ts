@@ -26,7 +26,7 @@ const body: BodyFormat = {
             type: "string",
             required: true
         },
-        customer_id: {
+        customerId: {
             type: "number",
             required: true
         },
@@ -37,7 +37,7 @@ const body: BodyFormat = {
                 type: "object",
                 required: true,
                 fields: {
-                    item_id: {
+                    itemId: {
                         type: "number",
                         required: true
                     },
@@ -94,7 +94,7 @@ const func = async (ctx: IRouterContext): Promise<void> => {
     // const headers = di.validator.processHeader<ICommonHeaderParamsProcessed>(headerParams, ctx.request.headers);
 
     ctx.status = 200;
-    ctx.body = await di.salesOrderService.create(requestBody);
+    ctx.body = await di.salesOrderService.create(requestBody) || 'Item stock is insufficient';
 };
 export const openapiPostSalesOrder: IOpenApiRoute = {
     get,

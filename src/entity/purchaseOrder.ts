@@ -16,8 +16,8 @@ export class PurchaseOrder extends BaseEntity {
     @Column({name: "date"})
     public date: string;
 
-    @Column({name: "supplier_id"})
-    public supplier_id: number;
+    @Column({name: "supplierId"})
+    public supplierId: number;
 
     public items: PurchaseOrderItem[];
 }

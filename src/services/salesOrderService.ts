@@ -1,11 +1,13 @@
-import { SalesOrder, SalesOrderItem } from "../entity";
+import { SalesOrder } from "../entity";
 import { IDI } from "../interface";
 import { Repository } from "typeorm";
 import { SalesOrderItemService } from "./salesOrderItemService";
+import { ItemService } from "./itemService";
 
 export class SalesOrderService {
     private static salesOrderRepository: Repository<SalesOrder> = null;
     private static salesOrderItemService: SalesOrderItemService = null;
+    private static itemService: ItemService = null;
 
     constructor(di: IDI) {
         if (SalesOrderService.salesOrderRepository === null) {
@@ -15,28 +17,38 @@ export class SalesOrderService {
         if (SalesOrderService.salesOrderItemService === null) {
             SalesOrderService.salesOrderItemService = new SalesOrderItemService(di);
         }
+
+        if (SalesOrderService.itemService === null) {
+            SalesOrderService.itemService = new ItemService(di);
+        }
     }
 
     public async create(data: SalesOrder): Promise<SalesOrder> {
         const salesOrder = new SalesOrder();
         salesOrder.date = data.date;
-        salesOrder.customer_id = data.customer_id;
+        salesOrder.customerId = data.customerId;
         try {
-            const salesOrderResponse = await SalesOrderService.salesOrderRepository.save(salesOrder);
-            const salesOrderItem = new SalesOrderItem();
-            
             for(let i = 0; i < data.items.length; i++) {
-                salesOrderItem.sales_order_id = salesOrderResponse.id;
-                salesOrderItem.item_id = data.items[i].item_id;
-                salesOrderItem.price = data.items[i].price;
-                salesOrderItem.qty = data.items[i].qty;
-                
-                await SalesOrderService.salesOrderItemService.create(salesOrderItem);
+                const itemResponse = await SalesOrderService.itemService.findById(data.items[i].itemId);
+
+                if(itemResponse.qty-data.items[i].qty < 0) {
+                    return null;
+                }
             }
+
+            const salesOrderResponse = await SalesOrderService.salesOrderRepository.save(salesOrder);
+            
+            await SalesOrderService.salesOrderItemService.createBulk(salesOrderResponse.id, data.items); 
+
             return salesOrderResponse;
         } catch (e) {
             console.log(e);
             throw new Error(e);
         }
+    }
+
+    public async delete(data: SalesOrder): Promise<SalesOrder> {
+        await SalesOrderService.salesOrderRepository.delete(data.id);
+        return data;
     }
 }

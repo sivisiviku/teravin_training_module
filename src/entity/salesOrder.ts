@@ -16,8 +16,8 @@ export class SalesOrder extends BaseEntity {
     @Column({name: "date"})
     public date: string;
 
-    @Column({name: "customer_id"})
-    public customer_id: number;
+    @Column({name: "customerId"})
+    public customerId: number;
 
     public items: SalesOrderItem[];
 }
